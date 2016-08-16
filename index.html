@@ -1,5 +1,335 @@
----
-layout: default
-title: test title
----
-<p>Hello world!</p>    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="./static/css/webuploader.css">
+  <style>
+  .liEles{
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin: 3px 10px;
+    position: relative;
+  }
+  .liElesDiv,
+  .inputBtn{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    margin: 0 0 0 0;
+    background: url(./static/images/chooseBtn.png) no-repeat;
+    background-position: 0 0;
+  }
+  .inputBtn{
+    z-index: 999;
+    opacity: 0;
+  }
+  .inputBtn:checked + .liElesDiv{
+    background-position: 0 -24px;
+  }
+  .intro{
+    position: absolute;
+    width: 50px;
+    top: 100%;
+    left: 50%;
+    margin: 0 0 0 -25px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: '微软雅黑 Regular','微软雅黑';
+    color: #333333;
+  }
+  #upload{
+    position: absolute;
+    width: 100px;
+    height: 35px;
+    left: 9999px;
+  }
+  #imgBtn{
+    width: 100px;
+    height: 35px;
+    border-radius: 4px 4px 4px 4px;
+    margin:60px auto 0 auto;
+    background: #47c9af;
+    line-height: 35px;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;\
+    cursor: pointer;
+  }
+  </style>
+</head>
+<body>
+    <div style="margin: 60px auto;width: 1120px;text-align: center;">
+        <canvas id="canvasa" width="510" height="510" style="display: inline-block;margin: 0 40px 0 0;border: 1px solid #aaa;"></canvas><canvas id="canvasb" width="510" height="510" style="display: inline-block;margin: 0 0 0 40px;border: 1px solid #aaa;"></canvas>
+    </div>
+    <ul style="display: block;height: 30px;line-height: 30px;margin: 20px auto;padding: 0 0 0 0;text-align: center;list-style: none;">
+    <li class="liEles" data-id="1" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">去红</span>
+    </li>
+    <li class="liEles" data-id="2" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">去绿</span>
+    </li>
+    <li class="liEles" data-id="3" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">去蓝</span>
+    </li>
+    <li class="liEles" data-id="4" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">灰度</span>
+    </li>
+    <li class="liEles" data-id="5" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">黑白</span>
+    </li>
+    <li class="liEles" data-id="6" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">反色</span>
+    </li>
+    <li class="liEles" data-id="7" onclick="liElesEvent(this)">
+      <input type="radio" class="inputBtn" name="inputBtnName">
+      <div class="liElesDiv"></div>
+      <span class="intro">模糊</span>
+    </li>    
+    </ul>
+    <div id="upload"></div>
+    <div id="imgBtn">换张图片</div>
+    <script type="text/javascript" src="./static/js/jquery-2.1.3.min.js"></script>
+  <script type="text/javascript" src="./static/js/webuploader.js"></script>
+  <script type="text/javascript">
+  var canvasa=document.getElementById("canvasa");
+  var canvasb=document.getElementById("canvasb");
+  var contexta=canvasa.getContext("2d");
+  var contextb=canvasb.getContext("2d");
+  var image=new Image();
+  window.onload=function(){ 
+    // 初始化Web Uploader
+      var uploader = WebUploader.create({
+
+        // 自动上传。
+        auto: false,
+        // swf文件路径
+        swf: './static/js/Uploader.swf',
+        // 文件接收服务端。
+        server:"/index.php?ro=materialimage&ra=uploadimage",
+        // 选择文件的按钮。可选。
+        // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+        pick: '#upload',
+
+        // 只允许选择文件，可选。
+        accept: {
+            title: 'Images',
+            extensions: 'gif,jpg,jpeg,bmp,png',
+            mimeTypes: 'image/*'
+        }
+    });
+      // 当有文件添加进来的时候
+    uploader.on( 'fileQueued', function( file ) {
+        // 创建缩略图
+        uploader.makeThumb( file, function( error, src ) {
+          var imgSrc=src;
+            if ( error ) {
+              imgSrc="";
+              return;
+            }
+            image.src=imgSrc;
+        },500,500);
+    });
+
+    // 文件上传过程中创建进度条实时显示。
+    uploader.on( 'uploadProgress', function( file, percentage ) {
+    });
+
+    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+    uploader.on( 'uploadSuccess', function( file, response ) {
+      
+    });
+
+    // 文件上传失败，现实上传出错。
+    uploader.on( 'uploadError', function( file ) {
+
+    });
+
+    // 完成上传完了，成功或者失败，先删除进度条。
+    uploader.on( 'uploadComplete', function( file ) {
+       uploader.removeFile( file );
+    });
+       image.src="./static/images/pz-4.jpg";
+      image.onload=function(){
+          contexta.clearRect(0,0,canvasa.width,canvasa.height);
+          contexta.drawImage(image,0,0,canvasa.width,canvasa.height);
+    };
+    $("#imgBtn").on("click",function(){
+        $("#upload").find("label").click();
+    });
+  };
+
+  var imageFn={
+    filter1:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height;
+          for(i=0;i<l;i++){
+              pixelData[4*i+0]=0;
+              // pixelData[4*i+1]=0;
+              // pixelData[4*i+2]=0;
+              // pixelData[4*i+3]=1;
+          }
+           contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter2:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height;
+          for(i=0;i<l;i++){
+              //pixelData[4*i+0]=0;
+               pixelData[4*i+1]=0;
+              // pixelData[4*i+2]=0;
+              // pixelData[4*i+3]=1;
+          }
+           contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter3:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height;
+          for(i=0;i<l;i++){
+              //pixelData[4*i+0]=0;
+              // pixelData[4*i+1]=0;
+               pixelData[4*i+2]=0;
+              // pixelData[4*i+3]=1;
+          }
+           contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter4:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height,
+          r=0,
+          g=0,
+          b=0,
+          grey=0;
+          for(i=0;i<l;i++){
+                  r=pixelData[4*i+0],
+                  g=pixelData[4*i+1],
+                  b=pixelData[4*i+2],
+                  grey=r*0.3+g*0.59+b*0.11;
+                  pixelData[4*i+0]=grey;
+                  pixelData[4*i+1]=grey;
+                  pixelData[4*i+2]=grey;
+          }
+          contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter5:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height,
+          r=0,
+          g=0,
+          b=0,
+          grey=0,
+          v=0;
+          for(i=0;i<l;i++){
+                  r=pixelData[4*i+0],
+                  g=pixelData[4*i+1],
+                  b=pixelData[4*i+2],
+                  grey=r*0.3+g*0.59+b*0.11;
+                  if(grey>255/2){
+                    v=255;
+                  }else{
+                    v=0;
+                  }
+                  pixelData[4*i+0]=v;
+                  pixelData[4*i+1]=v;
+                  pixelData[4*i+2]=v;
+          }
+           contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter6:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          i=0,
+          l=canvasa.width*canvasa.height;
+          for(i=0;i<l;i++){
+                  pixelData[4*i+0]=255-pixelData[4*i+0];
+                  pixelData[4*i+1]=255-pixelData[4*i+1];
+                  pixelData[4*i+2]=255-pixelData[4*i+2];
+          }
+          contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+    filter7:function(){
+      var imageData=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelData=imageData.data,
+          imageDataTmp=contexta.getImageData(0,0,canvasa.width,canvasa.height),
+          pixelDataTmp=imageData.data,
+          i=0,
+          j=0,
+          x=0,
+          y=0,
+          dx=0,
+          dy=0,
+          totalr=0,
+          totalg=0,
+          totalb=0,
+          blur=2,
+          blurNum=(2*blur+1)*(2*blur+1),
+          w=canvasa.width,
+          h=canvasa.height;
+          for(i=blur;i<w-blur;i++){
+            for(j=blur;j<h-blur;j++){
+                totalr=0;
+                totalg=0;
+                totalb=0;
+              for(dx=-blur;dx<=blur;dx++){
+                for(dy=-blur;dy<=blur;dy++){
+                  x=i+dx;
+                  y=j+dy;
+                  totalr+=pixelDataTmp[4*x*w+4*y+0];
+                  totalg+=pixelDataTmp[4*x*w+4*y+1];
+                  totalb+=pixelDataTmp[4*x*w+4*y+2];
+                }
+              }
+                pixelData[4*i*w+4*j+0]=totalr/blurNum;
+                pixelData[4*i*w+4*j+1]=totalg/blurNum;
+                pixelData[4*i*w+4*j+2]=totalb/blurNum;
+            }
+          }
+          contextb.clearRect(0,0,canvasb.width,canvasb.height);
+      contextb.putImageData(imageData,0,0,0,0,canvasb.width,canvasb.height);
+    },
+  };
+  var liElesEvent=(function(){
+    var oid=1000;
+    return function(ts){
+      var id=ts.getAttribute("data-id")||oid;
+      if(+id == +oid || typeof imageFn["filter"+id] == "undefined"){return;}
+      oid=id;
+      imageFn["filter"+id]();
+    };
+  })();
+
+  </script>
+</body>
+</html>
