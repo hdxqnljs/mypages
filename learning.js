@@ -409,6 +409,35 @@
 
 // test('didactical', 'advantage');
 
+// 两个无重复数组nums1和nums2，其中nums1是nums2的子集，求nums1中每个元素在nums2中比它大的第一个元素
+// 利用单调栈求出nums2中所有元素的第一个比自身大的元素，记录为hash表，然后给出nums1的map结果
+//   function test(nums1, nums2) {
+//     const hash = {};
+//     const stack = [];
+//     for (let i =0; i < nums2.length; i++) {
+//         if (stack.length <=0) {
+//             stack.push(nums2[i]);
+//             continue;
+//         }
+//         if (nums2[i] < stack[stack.length - 1]) {
+//             stack.push(nums2[i]);
+//             continue;
+//         }
+//         while(nums2[i] > stack[stack.length - 1]) {
+//             let temp = stack.pop();
+//             hash[temp] = nums2[i];
+//             if (stack.length <= 0) { break; }
+//         }
+//         stack.push(nums2[i]);
+//     }
+//     while(stack.length > 0) {
+//         hash[stack.pop()] = -1;
+//     }
+//     return console.log(nums1.map((v) => hash[v]));
+// };
+
+// test([4, 1, 2], [1, 3, 4, 2]);
+
 // 经过优化的冒泡排序，如果某一次冒泡过程中，没有发生元素交换，则证明子序列已经有序，无需继续进行冒泡
 // function test(array) {
 //   let hasSwap = false;
@@ -548,7 +577,7 @@ const tree = {
     },
     right: {
       value: 5,
-      right: { value: 8 }
+      right: { value: 9 }
     }
   },
   right: {
@@ -562,9 +591,11 @@ const tree = {
 // 树结构的先序遍历，每次访问栈顶元素，将它的右孩子先压入栈，再将左孩子压入栈
 // function test(treeObj) {
 //   const stack = [treeObj];
+//   const result = [];
 //   while(stack.length > 0) {
 //     let temp = stack.pop();
 //     console.log(temp.value, '===');
+//     result.push(temp.value);
 //     if (temp.right) {
 //       stack.push(temp.right);
 //     }
@@ -572,6 +603,7 @@ const tree = {
 //       stack.push(temp.left);
 //     } 
 //   }
+//   console.log('先序遍历后的结果数组为： ', result);
 // }
 
 // 树的先序遍历方法2，使用辅助函数visitLeft一路访问左孩子到底部，每一次将节点的右子树压入栈中
@@ -599,4 +631,65 @@ const tree = {
 //   }
 // }
 
+// 树的中序遍历，从根节点开始一路将左孩子压入栈中，当到达左孩子的叶子结点时，无左结点可以再压入栈中
+// 此时应该访问栈顶元素，然后将控制权交还给该被访问结点的右子树，让它去重复上面的过程
+// function visitLeft(treeObj, stack) {
+//   let temp = treeObj;
+//   while (!!temp) {
+//     stack.push(temp);
+//     temp = temp.left || null;
+//   }
+// }
+// function test(treeObj) {
+//   if (!treeObj) {
+//     return console.log('empty tree');
+//   }
+//   const result = [];
+//   const stack = [];
+//   let temp = treeObj;
+//   while(true) {
+//     visitLeft(temp, stack);
+//     if (stack.length <= 0) { break; }
+//     temp = stack.pop();
+//     console.log(temp.value);
+//     result.push(temp.value);
+//     temp = temp.right;
+//   }
+//   console.log('中序遍历后的结果数组为： ', result);
+// }
+
+// 树结构的层次优先遍历，利用队列，每次访问队首元素（即数组最后一项），然后先将左孩子排队入队列
+// 然后将右孩子排队入队列
+// function test(treeObj) {
+//   const queune = [treeObj];
+//   let temp = null;
+//   while(queune.length > 0) {
+//     temp = queune.pop();
+//     console.log(temp.value);
+//     if (temp.left) {
+//       queune.unshift(temp.left);
+//     }
+//     if (temp.right) {
+//       queune.unshift(temp.right);
+//     }
+//   }
+// }
+
 // test(tree);
+
+// 根据树的先序遍历结果，和中序遍历结果，还原树结构
+// function reBuild(preArr, midArr) {
+//   if (preArr.length <= 0 || midArr <= 0) {
+//     return null;
+//   }
+//   const leftMidArr = midArr.slice(0, midArr.indexOf(preArr[0]));
+//   const rightMidArr = midArr.slice(midArr.indexOf(preArr[0]) + 1);
+//   return {
+//     value: preArr[0],
+//     left: reBuild(preArr.slice(1, leftMidArr.length + 1), leftMidArr),
+//     right: reBuild(preArr.slice(0 - rightMidArr.length), rightMidArr)
+//   }
+// }
+
+// console.log(JSON.stringify(reBuild([ 1, 2, 4, 7, 10, 11, 8, 12, 5, 9, 3, 6 ], [ 10, 7, 11, 4, 12, 8, 2, 5, 9, 1, 6, 3 ])));
+
