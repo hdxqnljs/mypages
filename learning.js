@@ -693,3 +693,62 @@ const tree = {
 
 // console.log(JSON.stringify(reBuild([ 1, 2, 4, 7, 10, 11, 8, 12, 5, 9, 3, 6 ], [ 10, 7, 11, 4, 12, 8, 2, 5, 9, 1, 6, 3 ])));
 
+
+// function getNewString(target, position, operate) {
+//   const tempArr = target.split('');
+//   if (tempArr[position] === '0' && operate === -1) {
+//     tempArr[position] = '9';
+//   } else if (tempArr[position] === '9' && operate === 1) {
+//     tempArr[position] = '0';
+//   } else {
+//     tempArr[position] = `${Number.parseInt(tempArr[position]) + operate}`;
+//   }
+//   return tempArr.join('');
+// }
+
+// function search(stepsArr, target, record) {
+//   const currentValue = stepsArr[stepsArr.length - 1];
+//   const tempArr = [];
+//   if (currentValue === target) {
+//     return true;
+//   }
+//   for (let i = 0; i < 8; i++) {
+//     const position = Math.floor(i / 2);
+//     if (currentValue[position] === target[position]) { continue; }
+//     // if (Number.parseInt(currentValue[position]) > Number.parseInt(target[position]) && i % 2 === 0) {
+//     //   continue;
+//     // }
+//     // if (Number.parseInt(currentValue[position]) < Number.parseInt(target[position]) && i % 2 === 1) {
+//     //   continue;
+//     // }
+//     let tempStr = getNewString(currentValue, position, i % 2 === 0 ? 1 : -1);
+//     if (record.indexOf(tempStr) >= 0) { continue; }
+//     if (tempStr === target) {
+//       stepsArr.push(tempStr);
+//       return true;
+//     }
+//     record.push(tempStr);
+//     tempArr.push(tempStr);
+//   }
+//   for (let j = 0; j < tempArr.length; j++) {
+//     stepsArr.push(tempArr[j]);
+//     if (search(stepsArr, target, record)) { return true; }
+//     stepsArr.pop();
+//   }
+//   return false;
+// }
+
+// 求密码锁从 0000 转到 0202 的最短路径，过程中不能出现deadArr里的数组，否则死锁
+// function test(deadArr, target) {
+//   const queune = ["0000"];
+//   const record = deadArr.slice();
+//   const result = search(queune, target, record);
+//   if (result) {
+//     console.log(queune);
+//   } else {
+//     console.log('failed');
+//   }
+// }
+
+
+// test(["0201","0101","0102","1212","2002"], "0202");
