@@ -559,34 +559,34 @@
 
 
 // 树的各种遍历用假数据
-const tree = {
-  value: 1,
-  left: {
-    value: 2,
-    left: {
-      value: 4,
-      left: {
-        value: 7,
-        left: { value: 10 },
-        right: { value: 11 }
-      },
-      right: {
-        value: 8,
-        left: { value: 12 }
-      }
-    },
-    right: {
-      value: 5,
-      right: { value: 9 }
-    }
-  },
-  right: {
-    value: 3,
-    left: {
-      value: 6
-    }
-  }
-};
+// const tree = {
+//   value: 1,
+//   left: {
+//     value: 2,
+//     left: {
+//       value: 4,
+//       left: {
+//         value: 7,
+//         left: { value: 10 },
+//         right: { value: 11 }
+//       },
+//       right: {
+//         value: 8,
+//         left: { value: 12 }
+//       }
+//     },
+//     right: {
+//       value: 5,
+//       right: { value: 9 }
+//     }
+//   },
+//   right: {
+//     value: 3,
+//     left: {
+//       value: 6
+//     }
+//   }
+// };
 
 // 树结构的先序遍历，每次访问栈顶元素，将它的右孩子先压入栈，再将左孩子压入栈
 // function test(treeObj) {
@@ -693,62 +693,153 @@ const tree = {
 
 // console.log(JSON.stringify(reBuild([ 1, 2, 4, 7, 10, 11, 8, 12, 5, 9, 3, 6 ], [ 10, 7, 11, 4, 12, 8, 2, 5, 9, 1, 6, 3 ])));
 
-
-// function getNewString(target, position, operate) {
-//   const tempArr = target.split('');
-//   if (tempArr[position] === '0' && operate === -1) {
-//     tempArr[position] = '9';
-//   } else if (tempArr[position] === '9' && operate === 1) {
-//     tempArr[position] = '0';
+// function getNewString(str, position, operate) {
+//   let tempStr = str[position];
+//   if (str[position] === "0" && operate === -1) {
+//     tempStr = "9";
+//   } else if (str[position] === "9" && operate === 1) {
+//     tempStr = "0";
 //   } else {
-//     tempArr[position] = `${Number.parseInt(tempArr[position]) + operate}`;
+//     tempStr = `${Number.parseInt(str[position]) + operate}`;
 //   }
-//   return tempArr.join('');
+//   return `${str.slice(0, position)}${tempStr}${str.slice(position + 1)}`
 // }
 
-// function search(stepsArr, target, record) {
-//   const currentValue = stepsArr[stepsArr.length - 1];
-//   const tempArr = [];
-//   if (currentValue === target) {
-//     return true;
-//   }
+// function searchTarget(queune, pointer, deadArr, target) {
+//   const temp = queune[pointer];
+//   let tempStr = null;
+//   let position = 0;
 //   for (let i = 0; i < 8; i++) {
-//     const position = Math.floor(i / 2);
-//     if (currentValue[position] === target[position]) { continue; }
-//     // if (Number.parseInt(currentValue[position]) > Number.parseInt(target[position]) && i % 2 === 0) {
-//     //   continue;
-//     // }
-//     // if (Number.parseInt(currentValue[position]) < Number.parseInt(target[position]) && i % 2 === 1) {
-//     //   continue;
-//     // }
-//     let tempStr = getNewString(currentValue, position, i % 2 === 0 ? 1 : -1);
-//     if (record.indexOf(tempStr) >= 0) { continue; }
+//     position = Math.floor(i / 2);
+//     tempStr = getNewString(temp.value, position, i % 2 === 0 ? 1 : -1);
 //     if (tempStr === target) {
-//       stepsArr.push(tempStr);
-//       return true;
+//       queune.push({ value: tempStr, father: pointer });
+//       return queune.length - 1;
 //     }
-//     record.push(tempStr);
-//     tempArr.push(tempStr);
+//     if (deadArr.indexOf(tempStr) >= 0) { continue; }
+//     queune.push({ value: tempStr, father: pointer });
+//     deadArr.push(tempStr);
 //   }
-//   for (let j = 0; j < tempArr.length; j++) {
-//     stepsArr.push(tempArr[j]);
-//     if (search(stepsArr, target, record)) { return true; }
-//     stepsArr.pop();
-//   }
-//   return false;
 // }
 
-// 求密码锁从 0000 转到 0202 的最短路径，过程中不能出现deadArr里的数组，否则死锁
+// // 求密码锁从 0000 转到 0202 的最短路径，过程中不能出现deadArr里的数组，否则死锁
 // function test(deadArr, target) {
-//   const queune = ["0000"];
+//   const queune = [{ value: "0000", father: undefined }];
 //   const record = deadArr.slice();
-//   const result = search(queune, target, record);
-//   if (result) {
-//     console.log(queune);
+//   let pointer = 0;
+//   if (record.indexOf("0000") < 0) {
+//     record.push("0000");
 //   } else {
-//     console.log('failed');
+//     return console.log(queune, 'failed');
 //   }
+//   let temp = null;
+//   // 采用队列，将每个密码组合添加到队列中，移动指针则可以形成一种简单的宽度优先搜索
+//   while (pointer < queune.length) {
+//     temp = searchTarget(queune, pointer, record, target);
+//     if (temp) { break; }
+//     pointer++;
+//   }
+//   if (!temp) {
+//     return console.log(queune, 'failed');
+//   }
+//   const steps = [];
+//   while (typeof temp !== 'undefined') {
+//     steps.unshift(queune[temp].value);
+//     temp = queune[temp].father;
+//   }
+//   console.log(steps);
 // }
-
 
 // test(["0201","0101","0102","1212","2002"], "0202");
+
+// 找到数组中的第k大元素，只需遍历数组一次，维护一个长度为k的最小完全二叉堆即可，
+// 堆顶即为第k大的元素；因为只是求第k大的元素，所以无需维护一个排序好的长度为k
+// 的数据结构，最小堆即可满足需求，并且每次都插入元素和删除元素后的调整操作，时间
+// 复杂度更低；
+// 这里采用数组表示二叉堆，则任意元素的左右孩子为 2 * i + 1 和 2 * i + 2；
+// 任意元素的父元素为 Math.floor((i - 1) / 2),即减去一再除以二再向下取整
+// 插入：不妨在数组末尾插入元素，并从该元素起与它的父元素比较，若父元素更小，则交换
+// 删除：不妨让末尾元素覆盖堆顶元素，然后从堆顶开始与它的子元素比较，与更小的子元素交换
+// function helperAdjust(array, value, k) {
+//   let i = array.length;
+//   array.push(value);
+//   while(i > 0) {
+//     let fatherIndex = Math.floor((i - 1) / 2);
+//     if (array[fatherIndex] <= array[i]) { break; }
+//     let temp = array[i];
+//     array[i] = array[fatherIndex];
+//     array[fatherIndex] = temp;
+//     i = fatherIndex;
+//   }
+//   if (array.length <= k) {
+//     return array;
+//   }
+//   array[0] = array.pop();
+//   i = 0;
+//   while(i < array.length - 1) {
+//     if ( 2 * i + 2 > array.length) {
+//       break;
+//     }
+//     let childIndex = null;
+//     if (2 * i + 3 <= array.length) {
+//       childIndex = array[2 * i + 1] < array[2 * i + 2] ? 2 * i + 1 : 2 * i + 2;
+//     } else {
+//       childIndex = 2 * i + 1;
+//     }
+//     let temp = array[i];
+//     array[i] = array[childIndex];
+//     array[childIndex] = temp;
+//     i = childIndex;
+//   }
+//   return array;
+// }
+
+// 改进后的堆调整函数，上面的堆调整函数，每次都会进行一次插入操作，然后判断堆长度是否大于k，
+// 如果大于k则进行一次删除堆顶元素操作，时间复杂度为 2 * log k
+// 改进后的调整函数，当堆长度小于k时进行插入操作然后返回；当堆的长度已经达到k时，直接用新元素
+// 覆盖堆顶元素，因为堆顶元素是第 k + 1 大的元素，所以必会被抛弃；此时栈顶元素被复制为新元素
+// 则最小堆的性质有可能被破坏，所以从堆顶开始向下比较，与更小的子元素交换，直到叶子结点；所以
+// 新的堆调整函数，每次最坏的时间复杂度为 log k，不会出现2倍的log k，整体的算法复杂度为n log k
+// function helperAdjust(array, value, k) {
+//   let len = array.length;
+//   if (array.length + 1 <= k) {
+//     array.push(value);
+//     while(len > 0) {
+//       let fatherIndex = Math.floor((len - 1) / 2);
+//       if (array[fatherIndex] <= array[len]) { break; }
+//       let temp = array[len];
+//       array[len] = array[fatherIndex];
+//       array[fatherIndex] = temp;
+//       len = fatherIndex;
+//     }
+//     return array;
+//   }
+//   array[0] = value;
+//   len = 0;
+//   while(len < array.length) {
+//     if (2 * len + 2 > array.length) { break; }
+//     let childIndex = null;
+//     if (2 * len + 3 <= array.length) {
+//       childIndex = array[2 * len + 1] < array[2 * len + 2] ? 2 * len + 1 : 2 * len + 2;
+//     } else {
+//       childIndex = 2 * len + 1;
+//     }
+//     if (array[childIndex] >= array[len]) { break; }
+//     let temp = array[len];
+//     array[len] = array[childIndex];
+//     array[childIndex] = temp;
+//     len = childIndex;
+//   }
+//   return array;
+// }
+
+// function test(array, k) {
+//   const minHeap = [];
+//   for (let i = 0; i < array.length; i++) {
+//     if (typeof minHeap[0] !== 'undefined' && array[i] < minHeap[0]) { continue; }
+//     helperAdjust(minHeap, array[i], k);
+//   }
+//   console.log(minHeap);
+// }
+
+// test([ 1, 2, 4, 7, 10, 11, 8, 12, 5, 9, 3, 6 ], 3);
