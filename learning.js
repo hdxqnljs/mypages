@@ -843,3 +843,79 @@
 // }
 
 // test([ 1, 2, 4, 7, 10, 11, 8, 12, 5, 9, 3, 6 ], 3);
+
+// leetcode 84; 给定一个数组 [5, 4, 3, 2, 1]，数值代表y轴高度，每项的宽度均为1
+// 求这些项能组成的最大矩形面积；
+// 最大的矩形它的高度一定与某项的高度一致，否则若高度低于所有项，高度增加即可增加矩形面积
+// 所以问题可转换为，求以每一项为顶点的最大矩形面积，需要确定每一项的左右边界，即找到左右
+// 第一个小于它的元素，维护一个递增的单调栈，因为递增所以入栈的每项的左边界就是自己的位置
+// 如果要入栈的一项与栈顶的元素高度相同，它的左边界就是栈顶元素的左边界；然后遇到一项比栈顶
+// 元素小，此时可以进行出栈操作，保存第一次的栈顶元素，因为它是栈中元素里最大的，所以要出栈
+// 的元素的右边界都是它的位置；循环出栈，知道栈顶元素的高度小于等于遍历到的元素，若等于则新
+// 入栈的元素的左边界就是该等于它高度元素的左边界；若小于则新入栈的元素的左边界等于已经出栈
+// 被抛弃的元素的位置；所以每次循环中的出栈操作前，先更新要入栈元素的左边界；在遍历完所有元素后
+// 进行清理栈元素的操作即可，每个元素都进行了入栈和出栈两次操作，故时间复杂度为2n，即O(n)
+// function helper(hash, element) {
+//   const {
+//     position,
+//     left,
+//     right,
+//     value
+//   } = element;
+//   hash[position] = value * (right - left + 1);
+//   console.log(element);
+// }
+
+// function test(height) {
+//   const stack = [];
+//   const hash = {};
+//   let topElement = null;
+//   let temp = null;
+//   for (let i = 0; i < height.length; i++) {
+//       topElement = stack[stack.length - 1];
+//       if (!topElement || height[i] > topElement.value) {
+//           stack.push({
+//              value: height[i],
+//              position: i,
+//              left: i
+//           });
+//           continue;
+//       }
+//       if (height[i] === topElement.value) {
+//         stack.push({
+//            value: height[i],
+//            position: i,
+//            left: topElement.left
+//         });
+//         continue;
+//       }
+//       temp = {
+//         value: height[i],
+//         position: i
+//       };
+//       while (stack.length > 0) {
+//         if (stack[stack.length - 1].value === height[i]) {
+//           temp.left = stack[stack.length - 1].left;
+//           break;
+//         }
+//         if (stack[stack.length - 1].value < height[i]) {
+//           break;
+//         }
+//         temp.left = stack[stack.length - 1].left;
+//         stack[stack.length - 1].right = topElement.position;
+//         helper(hash, stack.pop()); 
+//       }
+//       stack.push(temp);
+//   }
+//   topElement = stack[stack.length - 1];
+//   while(stack.length > 0) {
+//     stack[stack.length - 1].right = topElement.position;
+//     helper(hash, stack.pop());
+//   }
+//   const result = Object.keys(hash)
+//   .map((k) => hash[k])
+//   .reduce((total, item) => item > total ? item : total , 0);
+//   console.log(hash, result);
+// }
+
+// test([5,4,1,2]);
