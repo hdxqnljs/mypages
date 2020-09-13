@@ -921,3 +921,86 @@
 // }
 
 // test([5,4,1,2]);
+
+
+// leetcode 241; 求表达式 "2*3-4*5" 加括号后的所有运算结果，该题采取动态规划的思路；
+// 首先将表达式中的数字和运算符提取出来，分别为 [2, 3, 4, 5] 和 [*, -, *], 然后求第
+// 0个数字到第4个数字的所有运算结果即可。例如 [0, 4] = [0,0][1,4] + [0,1][2,4] + [0,2][3,4]
+// + [0,3][4,4]。其中[m,m]结果就是第m个数字组成的数组，例如[1,1] = [3]；这里还是用到了递归的思想，
+// 例如需要[2,4]的时候，就需要把它分解为[2,2][3,4] + [2,3][4,4]；对应函数dpHelper。
+// 总结：实际计算为n * n次计算，所以时间复杂度为n方。
+// function helper(leftArr, rightArr, operate) {
+//   const tempArr = [];
+//   let temp = null;
+//   for (let l = 0; l < leftArr.length; l++) {
+//     for (let r = 0; r < rightArr.length; r++) {
+//       switch(operate) {
+//         case '+':
+//           temp = leftArr[l] + rightArr[r];
+//           break;
+//         case '-':
+//           temp = leftArr[l] - rightArr[r];
+//           break;
+//         case '*':
+//           temp = leftArr[l] * rightArr[r];
+//           break;
+//         default:
+//           temp = null;
+//           break;
+//       }
+//       if (temp === null || tempArr.indexOf(temp) >= 0) { continue; }
+//       tempArr.push(temp);
+//     }
+//   }
+//   return tempArr;
+// }
+
+// function dpHelper(start, end, dp, operates) {
+//   if (end - start <= 1) {
+//     return helper(dp[`${start}-${start}`], dp[`${end}-${end}`], operates[start]);
+//   }
+//   const result = [];
+//   for (let i = end; i > start; i--) {
+//     Array.prototype.push.apply(result, helper(dp[`${start}-${i - 1}`], dp[`${i}-${end}`], operates[i - 1]));
+//   }
+//   return result.filter((value, index, arr) => arr.indexOf(value) >= index);
+// }
+
+// var diffWaysToCompute = function(input) {
+//     const dp = {};
+//     const numbers = [];
+//     const operates = [];
+//     const operatesRecord = ['+', '-', '*'];
+//     let temp = null;
+//     let tempNumber = '';
+//     for (let n = 0; n < input.length; n++) {
+//       if (operatesRecord.indexOf(input[n]) >= 0) {
+//         operates.push(input[n]);
+//         numbers.push(Number(tempNumber));
+//         tempNumber = '';
+//         temp = numbers.length - 1;
+//         dp[`${temp}-${temp}`] = numbers.slice(-1);
+//         continue;
+//       }
+//       if (n === input.length - 1) {
+//         numbers.push(Number(tempNumber + input[n]));
+//         temp = numbers.length - 1;
+//         dp[`${temp}-${temp}`] = numbers.slice(-1);
+//         continue;
+//       }
+//       tempNumber += input[n];
+//     }
+//     for (let i = 1; i < numbers.length; i++) {
+//       temp = [];
+//       for (let j = i; j >= 1; j--) {
+//         if (typeof dp[`${j}-${i}`] === 'undefined') {
+//           dp[`${j}-${i}`] = dpHelper(j, i, dp, operates);
+//         }
+//         Array.prototype.push.apply(temp, helper(dp[`0-${j - 1}`], dp[`${j}-${i}`], operates[j - 1]));
+//       }
+//       dp[`0-${i}`] = temp.filter((value, index, arr) => arr.indexOf(value) >= index);
+//     }
+//     console.log(numbers, operates, dp);
+// };
+
+// diffWaysToCompute("2*3-4*5");
