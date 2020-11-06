@@ -1004,3 +1004,35 @@
 // };
 
 // diffWaysToCompute("2*3-4*5");
+
+// 求是否有办法把数组nums分为k个子数组，其中每个子数组长度相等，并且元素连续
+// var isPossibleDivide = function(nums, k) {
+//     if (nums.length % k !== 0) { return false; }
+//     const tempArr = nums.sort((a, b) => a - b);
+//     const stack = [tempArr[0]];
+//     const hash = { [tempArr[0]]: 1 };
+//     for (let i = 1; i < tempArr.length; i++) {
+//         hash[tempArr[i]] = hash[tempArr[i]] ? hash[tempArr[i]] + 1 : 1;
+//         if (tempArr[i] === stack[stack.length - 1]) { continue; }
+//         stack.push(tempArr[i]);
+//     }
+//     let pointer = 0;
+//     let start = 0;
+//     console.log(stack, hash);
+//     while(start < nums.length) {
+//         for (let j = 0; j < k; j++) {
+//             if (!hash[stack[pointer] + j]) { return false; }
+//             hash[stack[pointer] + j] -= 1;
+//             start++;
+//             console.log(stack, hash, "======");
+//         }
+//         while (pointer < stack.length) {
+//             if (hash[stack[pointer]]) { break; }
+//             pointer++;
+//         }
+//         console.log(pointer, "++++++");
+//     }
+//     return true; 
+// };
+
+// console.log(isPossibleDivide([3,2,1,2,3,4,3,4,5,9,10,11], 3));
